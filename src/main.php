@@ -85,11 +85,14 @@ class Main {
 		if ( false === $settings || false === $eth_value ) {
 			return;
 		}
-		$description = esc_html( $settings['payment_description'] );
-		$description = str_replace( '%amount', '<strong>' . $eth_value . ' ETH</strong>', $description );
-		$description = str_replace( '%address', '<strong>' . $settings['payment_address'] . '</strong>', $description );
-		$description = str_replace( '%ref', '<strong>' . $tx_ref->get() . '</strong>', $description );
 		echo '<h2>Payment details</h2>';
-		echo $description;
+		echo esc_html( $settings['payment_description'] );
+		?>
+		<ul>
+			<li><?php _e( 'Amount', 'pay_by_ether' ); ?>: <strong><?php echo esc_html( $eth_value ); ?></strong></li>
+			<li><?php _e( 'Address', 'pay_by_ether' ); ?>: <strong><?php echo esc_html( $settings['payment_address'] ); ?></strong></li>
+			<li><?php _e( 'Data', 'pay_by_ether' ); ?>: <strong><?php echo esc_html( $tx_ref->get() ); ?></strong></li>
+		</ul>
+		<?php
 	}
 }
