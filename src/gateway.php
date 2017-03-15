@@ -231,7 +231,7 @@ class Gateway extends WC_Payment_Gateway {
 				'title'       => __( 'Payment instructions', 'pay_with_ether' ),
 				'type'        => 'textarea',
 				'description' => __( 'The payment instructions shown to your customers after their order has been placed, and emailed to them when ordering.', 'pay_with_ether' ),
-				'default'     => __( 'Please send payment of %amount to %address quoting reference number %ref. Your order will be updated within 24 working hours of receiving payment.', 'pay_with_ether' ),
+				'default'     => __( 'Please send the payment as per the details below. Ensure these are quoted exactly, otherwise the we won\'t be able to reconcile your payment.', 'pay_with_ether' ),
 			),
 			'your_details' => array(
 				'title'       => __( 'ETH Pricing', 'pay_with_ether' ),
@@ -391,21 +391,21 @@ class Gateway extends WC_Payment_Gateway {
 	public function thank_you_page( $order_id ) {
 		$order       = new WC_Order( $order_id );
 		$eth_value   = $order->get_meta( '_pwe_eth_value' );
-		$description = esc_html( $this->settings['payment_description'] );
+		$description = $this->settings['payment_description'];
 		$tx_ref      = new TransactionReference( $order_id );
-
-		// Replace placeholders in the description.
-		$description = str_replace( '%amount', '<strong>' . esc_html( $eth_value ) . ' ETH</strong>', $description );
-		$description = str_replace( '%address', '<strong>' . esc_html( $this->settings['payment_address'] ) . '</strong>', $description );
-		$description = str_replace( '%ref', '<strong>' . esc_html( $tx_ref->get() ) . '</strong>', $description );
 
 		// Output everything.
 		?>
 		<section class="pwe-payment-instructions">
 			<h2>Pay with Ether</h2>
 			<p>
-				<?php echo $description; ?>
+				<?php echo esc_html( $description ); ?>
 			</p>
+			<ul>
+				<li><?php _e( 'Amount', 'pay_by_ether' ); ?>: <strong><?php echo esc_html( $eth_value ); ?></strong></li>
+				<li><?php _e( 'Address', 'pay_by_ether' ); ?>: <strong><?php echo esc_html( $this->settings['payment_address'] ); ?></strong></li>
+				<li><?php _e( 'Data', 'pay_by_ether' ); ?>: <strong><?php echo esc_html( $tx_ref->get() ); ?></strong></li>
+			</ul>
 			<?php
 			$min = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 			if ( apply_filters( 'pwe_pay_with_metamask_button', true ) ) {
