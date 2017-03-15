@@ -406,32 +406,34 @@ class Gateway extends WC_Payment_Gateway {
 			<p>
 				<?php echo $description; ?>
 			</p>
+			<?php
+			$min = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+			if ( apply_filters( 'pwe_pay_with_metamask_button', true ) ) {
+				?>
+				<button class="pwe-metamask-button"><img src="https://metamask.io/img/metamask.png">Pay with MetaMask</button>
+				<?php
+				wp_enqueue_script(
+					'paywithether',
+					$GLOBALS['pay_with_ether']->base_url . "/js/pay-with-ether{$min}.js",
+					array( 'jquery' )
+				);
+				wp_enqueue_style(
+					'paywithether',
+					$GLOBALS['pay_with_ether']->base_url . "/css/pay-with-ether.css",
+					array()
+				);
+				wp_localize_script(
+					'paywithether',
+					'pwe',
+					[
+						'payment_address' => $this->settings['payment_address'],
+						'eth_value' => $eth_value,
+						'tx_ref' => $tx_ref->get(),
+					]
+				);
+			}
+			?>
 		</section>
 		<?php
-		$min = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
-		if ( apply_filters( 'pwe_pay_with_metamask_button', true ) ) {
-			?>
-			<button class="pwe-metamask-button"><img src="https://metamask.io/img/metamask.png">Pay with MetaMask</button>
-			<?php
-			wp_enqueue_script(
-				'paywithether',
-				$GLOBALS['pay_with_ether']->base_url . "/js/pay-with-ether{$min}.js",
-				array( 'jquery' )
-			);
-			wp_enqueue_style(
-				'paywithether',
-				$GLOBALS['pay_with_ether']->base_url . "/css/pay-with-ether.css",
-				array()
-			);
-			wp_localize_script(
-				'paywithether',
-				'pwe',
-				[
-					'payment_address' => $this->settings['payment_address'],
-					'eth_value' => $eth_value,
-					'tx_ref' => $tx_ref->get(),
-				]
-			);
-		}
 	}
 }
