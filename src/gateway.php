@@ -336,7 +336,7 @@ class Gateway extends WC_Payment_Gateway {
 		// Log the order details with the monitoring service if enabled.
 		if ( $this->have_api_access() ) {
 			$api_client = new ApiClient( $this->settings['api_key'] );
-			$tx_ref     = new TransactionReference( $order->get_id() );
+			$tx_ref     = new TransactionReference( $order_id );
 			$code       = $api_client->post(
 				'transaction/create',
 				[
@@ -390,7 +390,11 @@ class Gateway extends WC_Payment_Gateway {
 	 */
 	public function thank_you_page( $order_id ) {
 		$order       = new WC_Order( $order_id );
-		$eth_value   = $order->get_meta( '_pwe_eth_value' );
+		if ( is_callable( array( $order, 'get_meta' ) ) ) {
+			$eth_value   = $order->get_meta( '_pwe_eth_value' );
+		} else {
+			$eth_value = get_post_meta( $order_id, '_pwe_eth_value', true );
+		}
 		$description = $this->settings['payment_description'];
 		$tx_ref      = new TransactionReference( $order_id );
 

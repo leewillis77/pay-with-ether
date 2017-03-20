@@ -80,8 +80,13 @@ class Main {
 			return;
 		}
 		$settings  = get_option( 'woocommerce_pay-with-ether_settings', false );
-		$eth_value = get_post_meta( $order->get_id(), '_pwe_eth_value', true );
-		$tx_ref    = new TransactionReference( $order->get_id() );
+		if ( is_callable( array( $order, 'get_id' ) ) ) {
+			$order_id = $order->get_id();
+		} else {
+			$order_id = $order->id;
+		}
+		$eth_value = get_post_meta( $order_id, '_pwe_eth_value', true );
+		$tx_ref    = new TransactionReference( $order_id );
 		if ( false === $settings || false === $eth_value ) {
 			return;
 		}
