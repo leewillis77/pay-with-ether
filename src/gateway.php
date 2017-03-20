@@ -256,12 +256,12 @@ class Gateway extends WC_Payment_Gateway {
 		);
 		if ( ! $this->have_api_access() ) {
 			$description = '<p><strong>' . __( '<span style="color: #900" class="dashicons dashicons-thumbs-down"></span> Not connected.', 'pay_with_ether' ) . '</strong></p>';
-			$description .= '<p>' . __( "We can integrate with <a href='http://#'>PayWithEther</a>. A service that will seamlessly monitor the Ethereum block-chain and update your orders when payment has been received. If you have an account, we'll automatically verify / re-verify your access when you save your settings.", 'pay_with_ether' ) . '</p><p>' . sprintf( __( "If you don't have an account, you can <a href='%s' target='_blank'>sign up here</a> or enter your API key above.", 'pay_with_ether' ), 'https://FIXME.com' ) . '</p>';
+			$description .= '<p>' . sprintf( __( "We can integrate with <a href='%s'>PayWithEther</a>. A service that will seamlessly monitor the Ethereum block-chain and update your orders when payment has been received. If you have an account, we'll automatically verify / re-verify your access when you save your settings.", 'pay_with_ether' ), 'https://www.paywithether.com' ) . '</p><p>' . sprintf( __( "If you don't have an account, you can <a href='%s' target='_blank'>sign up here</a> or enter your API key above.", 'pay_with_ether' ), 'https://www.paywithether.com' ) . '</p>';
 		} else {
 			$description = '<p><strong>' . __( '<span style="color: #090" class="dashicons dashicons-thumbs-up"></span> Connected.', 'pay_with_ether' ) . '</strong></p><p>' . sprintf( __( 'Last checked at %s', 'pay_with_ether' ), $this->get_api_verified_time() ) . '</p>';
 		}
 		$this->form_fields['api_key'] = array(
-			'title'       => __( 'PayWithEther.com API Key', 'pay_with_ether' ),
+			'title'       => __( 'PayWithEther API Key', 'pay_with_ether' ),
 			'type'        => 'text',
 			'description' => $description,
 		);
