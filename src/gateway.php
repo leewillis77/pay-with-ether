@@ -6,8 +6,6 @@ use WC_Logger;
 use WC_Order;
 use WC_Payment_Gateway;
 
-use Endroid\QrCode\QrCode;
-
 /**
  * WooCommerce gateway class implementation.
  */
