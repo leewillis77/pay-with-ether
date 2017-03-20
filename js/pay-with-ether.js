@@ -8,7 +8,7 @@ function pwe_sendTransaction() {
 	);
 }
 window.addEventListener('load', function() {
-	if (typeof web3 !== 'undefined' && web3.eth.accounts.length > 0) {
+	if (typeof web3 !== 'undefined') {
 		jQuery('.pwe-metamask-button').show();
 		jQuery('.pwe-metamask-button').on('click', pwe_sendTransaction);
 	}
