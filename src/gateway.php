@@ -5,6 +5,7 @@ namespace Ademti\Pwe;
 use WC_Logger;
 use WC_Order;
 use WC_Payment_Gateway;
+use WC_Admin_Settings;
 
 /**
  * WooCommerce gateway class implementation.
@@ -263,6 +264,22 @@ class Gateway extends WC_Payment_Gateway {
 			'type'        => 'text',
 			'description' => $description,
 		);
+	}
+
+	/**
+	 * Do not allow enabling of the gateway without providing a payment address.
+	 */
+	public function validate_enabled_field( $key, $value ) {
+		$post_data = $this->get_post_data();
+		if ( $value ) {
+			if ( empty( $post_data['woocommerce_pay-with-ether_payment_address'] ) ) {
+				WC_Admin_Settings::add_error( 'You must provide an Ethereum address before enabling the gateway' );
+				return 'no';
+			} else {
+				return 'yes';
+			}
+		}
+		return 'no';
 	}
 
 	/**
