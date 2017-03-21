@@ -14,6 +14,7 @@ echo "= " . $email_heading . " =\n\n";
 echo sprintf( __( 'Payment received for order %d.', 'pay_with_ether' ), is_callable( array( $order, 'get_id' ) ) ? $order->get_id() : $order->id ) . "\n\n";
 
 <?php echo __( "Congratulations. We've received ETH payment for your order. We've included your details below as a reminder of your order.", 'pay-with-ether' ) . "\n\n"; ?>
+
 echo "=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n\n";
 
 /**
