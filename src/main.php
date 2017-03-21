@@ -3,6 +3,7 @@
 namespace Ademti\Pwe;
 
 use Ademti\Pwe\PaymentReceivedEmail;
+use \WC_Logger;
 
 class Main {
 
@@ -119,4 +120,27 @@ class Main {
 		</ul>
 		<?php
 	}
+
+	/**
+	 * Log information using the WC_Logger class.
+	 *
+	 * Will do nothing unless debug is enabled.
+	 *
+	 * @param string $msg   The message to be logged.
+	 */
+	public function log( $msg ) {
+		static $logger = false;
+		$settings  = get_option( 'woocommerce_pay-with-ether_settings', false );
+		// Bail if debug isn't on.
+		if ( 'yes' !== $settings['debug'] ) {
+			return;
+		}
+		// Create a logger instance if we don't already have one.
+		if ( false === $logger ) {
+			$logger = new WC_Logger();
+		}
+		$logger->add( 'pay-with-ether', $msg );
+	}
+
+
 }

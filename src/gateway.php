@@ -46,26 +46,6 @@ class Gateway extends WC_Payment_Gateway {
 	}
 
 	/**
-	 * Log information using the WC_Logger class.
-	 *
-	 * Will do nothing unless debug is enabled.
-	 *
-	 * @param string $msg   The message to be logged.
-	 */
-	private function log( $msg ) {
-		static $logger = false;
-		// Bail if debug isn't on.
-		if ( 'yes' !== $this->settings['debug'] ) {
-			return;
-		}
-		// Create a logger instance if we don't already have one.
-		if ( false === $logger ) {
-			$logger = new WC_Logger();
-		}
-		$logger->add( $this->id, $msg );
-	}
-
-	/**
 	 * Output the logo.
 	 *
 	 * @param  string $icon    The default WC-generated icon.
@@ -103,7 +83,7 @@ class Gateway extends WC_Payment_Gateway {
 			printf( __( 'Payment of %s ETH will be due.', 'pay_with_ether' ), $eth_value );
 			echo '</p></strong>';
 		} catch ( \Exception $e ) {
-			$this->log(
+			$GLOBALS['pay_with_ether']->log(
 				sprintf(
 					__( 'Problem performing currency conversion: %s', 'pay_with_ether' ),
 					$e->getMessage()
@@ -307,8 +287,8 @@ class Gateway extends WC_Payment_Gateway {
 		}
 		$api_client = new ApiClient( $this->settings['api_key'] );
 		$code = $api_client->post( 'user/auth' );
-		$this->log( 'Verifying API connection, received code : ' . $code );
-		$this->log( 'Verifying API connection, received response : ' . print_r( $api_client->get_response_body(), 1 ) );
+		$GLOBALS['pay_with_ether']->log( 'Verifying API connection, received code : ' . $code );
+		$GLOBALS['pay_with_ether']->log( 'Verifying API connection, received response : ' . print_r( $api_client->get_response_body(), 1 ) );
 	}
 
 	/**
@@ -377,8 +357,8 @@ class Gateway extends WC_Payment_Gateway {
 					__( 'Order details could not be submitted to PayWithEther.com', 'pay_with_ether' )
 				);
 			}
-			$this->log( 'Logging order with monitoring service, received code ' . $code );
-			$this->log( 'Logging order with monitoring service, received response ' . print_r( $api_client->get_response_body(), 1 ) );
+			$GLOBALS['pay_with_ether']->log( 'Logging order with monitoring service, received code ' . $code );
+			$GLOBALS['pay_with_ether']->log( 'Logging order with monitoring service, received response ' . print_r( $api_client->get_response_body(), 1 ) );
 		}
 
 		// Redirect the user to the confirmation page.

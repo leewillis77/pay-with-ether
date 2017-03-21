@@ -42,7 +42,7 @@ class PaymentReceivedEmail extends WC_Email {
 	}
 
 	/**
-	 * Trigger the amil if required.
+	 * Trigger the email if required.
 	 */
 	public function trigger( $order_id ) {
 
@@ -50,12 +50,19 @@ class PaymentReceivedEmail extends WC_Email {
 			return;
 		}
 		$this->order = new \WC_Order( $order_id );
+		$GLOBALS['pay_with_ether']->log( 'Trigger received for PaymentReceivedEmail' );
 		$this->recipient    = is_callable( array( $this->order, 'get_billing_email' ) ) ? $this->order->get_billing_email() : $this->order->billing_email;
 		if ( is_callable( array( $this->order, 'get_payment_method' ) ) ) {
 			$payment_method = $this->order->get_payment_method();
 		} else {
 			$payment_method = $this->order->payment_method;
 		}
+		$GLOBALS['pay_with_ether']->log(
+			sprintf( 'Payment method for order %d is %s', $order_id, $payment_method )
+		);
+		$GLOBALS['pay_with_ether']->log(
+			sprintf( 'Recipient is %s', $this->recipient )
+		);
 		if ( 'pay-with-ether' !== $payment_method ) {
 			return;
 		}
