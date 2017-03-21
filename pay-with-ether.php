@@ -34,6 +34,6 @@ if ( version_compare( phpversion(), '5.6', '<' ) ) {
 } else {
 	// Add autoloaders, and load up the plugin.
 	require_once( dirname( __FILE__ ) . '/autoload.php' );
-	$GLOBALS['pay_with_ether'] = new \Ademti\Pwe\Main( plugins_url( '', __FILE__ ) );
+	$GLOBALS['pay_with_ether'] = new \Ademti\Pwe\Main( plugins_url( '', __FILE__ ), plugin_dir_path( __FILE__ ) );
 	$GLOBALS['pay_with_ether']->run();
 }

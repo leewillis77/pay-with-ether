@@ -2,6 +2,8 @@
 
 namespace Ademti\Pwe;
 
+use Ademti\Pwe\PaymentReceivedEmail;
+
 class Main {
 
 	/**
@@ -12,14 +14,22 @@ class Main {
 	public $base_url;
 
 	/**
+	 * The base path of the plugin files.
+	 *
+	 * @var string
+	 */
+	public $base_path;
+
+	/**
 	 * Constructor.
 	 *
 	 * Store variables for use later.
 	 *
 	 * @param string $base_url  The base URL of the plugin.
 	 */
-	function __construct( $base_url ) {
+	function __construct( $base_url, $base_path ) {
 		$this->base_url = $base_url;
+		$this->base_path = $base_path;
 	}
 
 	/**
@@ -29,6 +39,7 @@ class Main {
 		add_action( 'plugins_loaded', array( $this, 'on_plugins_loaded' ) );
 		add_action( 'init', array( $this, 'on_init' ) );
 		add_action( 'woocommerce_email_order_details', array( $this, 'email_content' ), 1, 4 );
+		add_filter( 'woocommerce_email_classes', array( $this, 'register_eth_payment_completed_email' ) );
 	}
 
 	/**
@@ -59,6 +70,14 @@ class Main {
 			return;
 		}
 	    add_filter( 'woocommerce_payment_gateways', array( $this, 'add_gateway' ) );
+	}
+
+	/**
+	 * Register our payment completed email.
+	 */
+	public function register_eth_payment_completed_email( $email_classes ) {
+		$email_classes['PWE_Payment_Completed'] = new PaymentReceivedEmail();
+		return $email_classes;
 	}
 
 	/**
