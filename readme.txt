@@ -4,7 +4,7 @@ Tags: e-commerce, payment, crypto, ethereum, ether, woocommerce
 Requires at least: 4.7
 Tested up to: 4.7.3
 License: GPL v2
-Stable tag: 0.9
+Stable tag: 0.9.3
 
 Pay with Ether enables customers to pay with Ether on your WooCommerce store.
 
@@ -31,6 +31,10 @@ Features:
 * Enter your Ethereum address to receive payments, confirm markup % and you're ready to go.
 
 == Changelog ==
+
+= 0.9.3 =
+* Do not allow gateway to be activated unless a payment address is set.
+* Fix error when receiving timeout notifications
 
 = 0.9 =
 * Released for plugin review
