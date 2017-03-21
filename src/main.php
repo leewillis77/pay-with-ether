@@ -114,7 +114,7 @@ class Main {
 		echo esc_html( $settings['payment_description'] );
 		?>
 		<ul>
-			<li><?php _e( 'Amount', 'pay_by_ether' ); ?>: <strong><?php echo esc_html( $eth_value ); ?></strong></li>
+			<li><?php _e( 'Amount', 'pay_by_ether' ); ?>: <strong><?php echo esc_html( $eth_value ); ?></strong> ETH</li>
 			<li><?php _e( 'Address', 'pay_by_ether' ); ?>: <strong><?php echo esc_html( $settings['payment_address'] ); ?></strong></li>
 			<li><?php _e( 'Data', 'pay_by_ether' ); ?>: <strong><?php echo esc_html( $tx_ref->get() ); ?></strong></li>
 		</ul>
