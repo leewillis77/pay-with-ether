@@ -86,8 +86,8 @@ class CallbackHandler {
 		if ( empty( $this->data->to ) ) {
 			$this->access_denied( 'No recipient (to)' );
 		}
-		if ( empty( $this->data->txHash ) ) {
-			$this->access_denied( 'No transaction hash' );
+		if ( empty( $this->data->txHash ) && 'sent' === $this->data->status ) {
+			$this->access_denied( 'No transaction hash for successful order.' );
 		}
 	}
 
