@@ -106,6 +106,9 @@ class CallbackHandler {
 	 * Accept payment for an order.
 	 */
 	private function accept_payment() {
+		// Trigger the emails to be registered and hooked.
+		WC()->mailer()->init_transactional_emails();
+
 		$order = new WC_Order( $this->order_id );
 		$order->add_order_note(
 			sprintf(
