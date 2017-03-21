@@ -38,7 +38,7 @@ class Main {
 	 */
 	public function run() {
 		add_action( 'plugins_loaded', array( $this, 'on_plugins_loaded' ) );
-		add_action( 'init', array( $this, 'on_init' ), 11 );
+		add_action( 'init', array( $this, 'on_init' ) );
 		add_filter( 'woocommerce_email_classes', array( $this, 'register_eth_payment_completed_email' ) );
 		add_action( 'woocommerce_email_order_details', array( $this, 'email_content' ), 1, 4 );
 	}
