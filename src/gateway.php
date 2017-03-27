@@ -411,7 +411,18 @@ class Gateway extends WC_Payment_Gateway {
 			$min = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 			if ( apply_filters( 'pwe_pay_with_metamask_button', true ) ) {
 				?>
-				<button class="pwe-metamask-button"><img src="https://metamask.io/img/metamask.png">Pay with MetaMask</button>
+				<div class="pwe-metamask-button">Pay with MetaMask</button>
+				<style type="text/css">
+					div.pwe-metamask-button {
+						background-image: url('<?php echo $GLOBALS['pay_with_ether']->base_url . '/img/1_pay_mm_off.png'; ?>');
+					}
+					div.pwe-metamask-button:hover {
+						background-image: url('<?php echo $GLOBALS['pay_with_ether']->base_url . '/img/1_pay_mm_over.png'; ?>');
+					}
+					div.pwe-metamask-button:active {
+						background-image: url('<?php echo $GLOBALS['pay_with_ether']->base_url . '/img/1_pay_mm_off.png'; ?>');
+					}
+				</style>
 				<?php
 				wp_enqueue_script(
 					'paywithether',

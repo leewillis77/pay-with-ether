@@ -1,1 +1,9 @@
-button.pwe-metamask-button { padding: 0.7em 1em; background-color: #e6e6e6; color: #666; display: none; margin-bottom: 1em; line-height: 2em; } button.pwe-metamask-button img { float: left; margin-right: 1em; height: 24px; width: 24px; }
+.pwe-metamask-button {
+	display: none;
+	width: 304px;
+	height: 89px;
+	background-size: 100%;
+	cursor: pointer;
+	text-indent: -99999px;
+	margin-bottom: 1em;
+}
