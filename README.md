@@ -4,7 +4,7 @@
 **Requires at least:** 4.7  
 **Tested up to:** 4.7.3  
 **License:** GPL v2  
-**Stable tag:** 0.9  
+**Stable tag:** 1.1.2  
 
 Pay with Ether enables customers to pay with Ether on your WooCommerce store.
 
@@ -34,6 +34,27 @@ Features:
 
 
 ## Changelog 
+
+
+### 1.1.2 
+* Use official PayWithMetaMask button
+
+
+### 1.1.1 
+* Fixes for plain text payment complete email.
+
+
+### 1.1.0 
+* Add payment complete email for PayWithEther.com integration.
+
+
+### 1.0.0 
+* Release to WordPress.org
+
+
+### 0.9.3 
+* Do not allow gateway to be activated unless a payment address is set.
+* Fix error when receiving timeout notifications
 
 
 ### 0.9 
