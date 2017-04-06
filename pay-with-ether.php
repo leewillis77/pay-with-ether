@@ -4,7 +4,7 @@
 Plugin Name: Pay With Ether
 Plugin URI: https://wordpress.org/pay-with-ether
 Description: Payment gateway for accepting payments using Ether. Offers integration with PayWithEther.com for automated payment processing.
-Version: 0.9.3
+Version: 1.1.3
 Author: Lee Willis
 Author URI: http://plugins.leewillis.co.uk/
 
@@ -34,6 +34,6 @@ if ( version_compare( phpversion(), '5.6', '<' ) ) {
 } else {
 	// Add autoloaders, and load up the plugin.
 	require_once( dirname( __FILE__ ) . '/autoload.php' );
-	$GLOBALS['pay_with_ether'] = new \Ademti\Pwe\Main( plugins_url( '', __FILE__ ) );
+	$GLOBALS['pay_with_ether'] = new \Ademti\Pwe\Main( plugins_url( '', __FILE__ ), plugin_dir_path( __FILE__ ) );
 	$GLOBALS['pay_with_ether']->run();
 }

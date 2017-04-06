@@ -106,6 +106,9 @@ class CallbackHandler {
 	 * Accept payment for an order.
 	 */
 	private function accept_payment() {
+		// Trigger the emails to be registered and hooked.
+		WC()->mailer()->init_transactional_emails();
+
 		$order = new WC_Order( $this->order_id );
 		$order->add_order_note(
 			sprintf(
@@ -132,8 +135,8 @@ class CallbackHandler {
 			]
 		);
 		if ( 200 !== $code ) {
-			$this->log( 'Received code ' . $code . ' when validating callback.' );
-			$this->log( $api_client->get_response_body() );
+			$GLOBALS['pay_with_ether']->log( 'Received code ' . $code . ' when validating callback.' );
+			$GLOBALS['pay_with_ether']->log( $api_client->get_response_body() );
 			$this->access_denied( 'Could not verify callback with API server' );
 		}
 	}
@@ -195,28 +198,8 @@ class CallbackHandler {
 	 * @param string $msg  Additional info to include in the failure.
 	 */
 	private function access_denied( $msg ) {
-		$this->log( "Access denied: $msg" );
+		$GLOBALS['pay_with_ether']->log( "Access denied: $msg" );
 		header( 'HTTP/1.1 403 Access denied : ' . $msg );
 		exit;
-	}
-
-	/**
-	 * Log information using the WC_Logger class.
-	 *
-	 * Will do nothing unless debug is enabled.
-	 *
-	 * @param string $msg  The message to log.
-	 */
-	private function log( $msg ) {
-		static $logger = false;
-		// Bail if debug isn't on.
-		if ( 'yes' !== $this->settings['debug'] ) {
-			return;
-		}
-		// Create a logger instance if we don't already have one.
-		if ( false === $logger ) {
-			$logger = new WC_Logger();
-		}
-		$logger->add( 'pay-with-ether', $msg );
 	}
 }

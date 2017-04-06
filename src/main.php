@@ -2,6 +2,9 @@
 
 namespace Ademti\Pwe;
 
+use Ademti\Pwe\PaymentReceivedEmail;
+use \WC_Logger;
+
 class Main {
 
 	/**
@@ -12,14 +15,22 @@ class Main {
 	public $base_url;
 
 	/**
+	 * The base path of the plugin files.
+	 *
+	 * @var string
+	 */
+	public $base_path;
+
+	/**
 	 * Constructor.
 	 *
 	 * Store variables for use later.
 	 *
 	 * @param string $base_url  The base URL of the plugin.
 	 */
-	function __construct( $base_url ) {
+	function __construct( $base_url, $base_path ) {
 		$this->base_url = $base_url;
+		$this->base_path = $base_path;
 	}
 
 	/**
@@ -28,6 +39,7 @@ class Main {
 	public function run() {
 		add_action( 'plugins_loaded', array( $this, 'on_plugins_loaded' ) );
 		add_action( 'init', array( $this, 'on_init' ) );
+		add_filter( 'woocommerce_email_classes', array( $this, 'register_eth_payment_completed_email' ) );
 		add_action( 'woocommerce_email_order_details', array( $this, 'email_content' ), 1, 4 );
 	}
 
@@ -59,6 +71,14 @@ class Main {
 			return;
 		}
 	    add_filter( 'woocommerce_payment_gateways', array( $this, 'add_gateway' ) );
+	}
+
+	/**
+	 * Register our payment completed email.
+	 */
+	public function register_eth_payment_completed_email( $email_classes ) {
+		$email_classes['PWE_Payment_Completed'] = new PaymentReceivedEmail();
+		return $email_classes;
 	}
 
 	/**
@@ -94,10 +114,33 @@ class Main {
 		echo esc_html( $settings['payment_description'] );
 		?>
 		<ul>
-			<li><?php _e( 'Amount', 'pay_by_ether' ); ?>: <strong><?php echo esc_html( $eth_value ); ?></strong></li>
+			<li><?php _e( 'Amount', 'pay_by_ether' ); ?>: <strong><?php echo esc_html( $eth_value ); ?></strong> ETH</li>
 			<li><?php _e( 'Address', 'pay_by_ether' ); ?>: <strong><?php echo esc_html( $settings['payment_address'] ); ?></strong></li>
 			<li><?php _e( 'Data', 'pay_by_ether' ); ?>: <strong><?php echo esc_html( $tx_ref->get() ); ?></strong></li>
 		</ul>
 		<?php
 	}
+
+	/**
+	 * Log information using the WC_Logger class.
+	 *
+	 * Will do nothing unless debug is enabled.
+	 *
+	 * @param string $msg   The message to be logged.
+	 */
+	public function log( $msg ) {
+		static $logger = false;
+		$settings  = get_option( 'woocommerce_pay-with-ether_settings', false );
+		// Bail if debug isn't on.
+		if ( 'yes' !== $settings['debug'] ) {
+			return;
+		}
+		// Create a logger instance if we don't already have one.
+		if ( false === $logger ) {
+			$logger = new WC_Logger();
+		}
+		$logger->add( 'pay-with-ether', $msg );
+	}
+
+
 }

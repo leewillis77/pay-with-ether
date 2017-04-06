@@ -46,26 +46,6 @@ class Gateway extends WC_Payment_Gateway {
 	}
 
 	/**
-	 * Log information using the WC_Logger class.
-	 *
-	 * Will do nothing unless debug is enabled.
-	 *
-	 * @param string $msg   The message to be logged.
-	 */
-	private function log( $msg ) {
-		static $logger = false;
-		// Bail if debug isn't on.
-		if ( 'yes' !== $this->settings['debug'] ) {
-			return;
-		}
-		// Create a logger instance if we don't already have one.
-		if ( false === $logger ) {
-			$logger = new WC_Logger();
-		}
-		$logger->add( $this->id, $msg );
-	}
-
-	/**
 	 * Output the logo.
 	 *
 	 * @param  string $icon    The default WC-generated icon.
@@ -103,7 +83,7 @@ class Gateway extends WC_Payment_Gateway {
 			printf( __( 'Payment of %s ETH will be due.', 'pay_with_ether' ), $eth_value );
 			echo '</p></strong>';
 		} catch ( \Exception $e ) {
-			$this->log(
+			$GLOBALS['pay_with_ether']->log(
 				sprintf(
 					__( 'Problem performing currency conversion: %s', 'pay_with_ether' ),
 					$e->getMessage()
@@ -261,7 +241,8 @@ class Gateway extends WC_Payment_Gateway {
 				'type'     => 'number',
 				'css'      => 'width:100px;',
 				'custom_attributes' => array(
-					'min'  => 0,
+					'min'  => -100,
+					'max'  => 100,
 					'step' => 0.5,
 				),
 			),
@@ -307,8 +288,8 @@ class Gateway extends WC_Payment_Gateway {
 		}
 		$api_client = new ApiClient( $this->settings['api_key'] );
 		$code = $api_client->post( 'user/auth' );
-		$this->log( 'Verifying API connection, received code : ' . $code );
-		$this->log( 'Verifying API connection, received response : ' . print_r( $api_client->get_response_body(), 1 ) );
+		$GLOBALS['pay_with_ether']->log( 'Verifying API connection, received code : ' . $code );
+		$GLOBALS['pay_with_ether']->log( 'Verifying API connection, received response : ' . print_r( $api_client->get_response_body(), 1 ) );
 	}
 
 	/**
@@ -377,8 +358,8 @@ class Gateway extends WC_Payment_Gateway {
 					__( 'Order details could not be submitted to PayWithEther.com', 'pay_with_ether' )
 				);
 			}
-			$this->log( 'Logging order with monitoring service, received code ' . $code );
-			$this->log( 'Logging order with monitoring service, received response ' . print_r( $api_client->get_response_body(), 1 ) );
+			$GLOBALS['pay_with_ether']->log( 'Logging order with monitoring service, received code ' . $code );
+			$GLOBALS['pay_with_ether']->log( 'Logging order with monitoring service, received response ' . print_r( $api_client->get_response_body(), 1 ) );
 		}
 
 		// Redirect the user to the confirmation page.
@@ -426,7 +407,7 @@ class Gateway extends WC_Payment_Gateway {
 				<a target="_blank" href="<?php echo $GLOBALS['pay_with_ether']->base_url ?>/tutorial">Tutorial</a>
 			</p>
 			<ul>
-				<li><?php _e( 'Amount', 'pay_by_ether' ); ?>: <strong><?php echo esc_html( $eth_value ); ?></strong></li>
+				<li><?php _e( 'Amount', 'pay_by_ether' ); ?>: <strong><?php echo esc_html( $eth_value ); ?></strong> ETH</li>
 				<li><?php _e( 'Address', 'pay_by_ether' ); ?>: <strong><?php echo esc_html( $this->settings['payment_address'] ); ?></strong></li>
 				<li><?php _e( 'Data', 'pay_by_ether' ); ?>: <strong><?php echo esc_html( $tx_ref->get() ); ?></strong></li>
 			</ul>
@@ -434,7 +415,18 @@ class Gateway extends WC_Payment_Gateway {
 			$min = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 			if ( apply_filters( 'pwe_pay_with_metamask_button', true ) ) {
 				?>
-				<div class="tip-button pwe-metamask-button"></div>
+				<div class="pwe-metamask-button">Pay with MetaMask</button>
+				<style type="text/css">
+					div.pwe-metamask-button {
+						background-image: url('<?php echo $GLOBALS['pay_with_ether']->base_url . '/img/1_pay_mm_off.png'; ?>');
+					}
+					div.pwe-metamask-button:hover {
+						background-image: url('<?php echo $GLOBALS['pay_with_ether']->base_url . '/img/1_pay_mm_over.png'; ?>');
+					}
+					div.pwe-metamask-button:active {
+						background-image: url('<?php echo $GLOBALS['pay_with_ether']->base_url . '/img/1_pay_mm_off.png'; ?>');
+					}
+				</style>
 				<?php
 				wp_enqueue_script(
 					'paywithether',
