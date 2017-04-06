@@ -227,7 +227,7 @@ class Gateway extends WC_Payment_Gateway {
 				'title'       => __( 'Payment instructions', 'pay_with_ether' ),
 				'type'        => 'textarea',
 				'description' => __( 'The payment instructions shown to your customers after their order has been placed, and emailed to them when ordering.', 'pay_with_ether' ),
-				'default'     => __( 'Please send the payment as per the details below. Ensure these are quoted exactly, otherwise we won\'t be able to reconcile your payment.', 'pay_with_ether' ),
+				'default'     => __( 'Please send the payment as per the details below. Ensure these are quoted exactly, otherwise we won\'t be able to reconcile your payment. Do NOT send from an exchange (like Coinbase), please read the tutorial below if you are unsure.', 'pay_with_ether' ),
 			),
 			'your_details' => array(
 				'title'       => __( 'ETH Pricing', 'pay_with_ether' ),
@@ -402,6 +402,9 @@ class Gateway extends WC_Payment_Gateway {
 			<h2>Pay with Ether</h2>
 			<p>
 				<?php echo esc_html( $description ); ?>
+			</p>
+			<p class="pwe-tutorial-link">
+				<a target="_blank" href="https://www.paywithether.com/tutorial"><?php _e( 'Tutorial', 'pay_with_ether' ); ?></a>
 			</p>
 			<ul>
 				<li><?php _e( 'Amount', 'pay_by_ether' ); ?>: <strong><?php echo esc_html( $eth_value ); ?></strong> ETH</li>
