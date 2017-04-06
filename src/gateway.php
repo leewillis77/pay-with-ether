@@ -403,8 +403,8 @@ class Gateway extends WC_Payment_Gateway {
 			<p>
 				<?php echo esc_html( $description ); ?>
 			</p>
-			<p>
-				<a target="_blank" href="<?php echo $GLOBALS['pay_with_ether']->base_url ?>/tutorial">Tutorial</a>
+			<p class="pwe-tutorial-link">
+				<a target="_blank" href="https://www.paywithether.com/tutorial"><?php _e( 'Tutorial', 'pay_with_ether' ); ?></a>
 			</p>
 			<ul>
 				<li><?php _e( 'Amount', 'pay_by_ether' ); ?>: <strong><?php echo esc_html( $eth_value ); ?></strong> ETH</li>
