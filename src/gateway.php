@@ -241,7 +241,8 @@ class Gateway extends WC_Payment_Gateway {
 				'type'     => 'number',
 				'css'      => 'width:100px;',
 				'custom_attributes' => array(
-					'min'  => 0,
+					'min'  => -100,
+					'max'  => 100,
 					'step' => 0.5,
 				),
 			),
