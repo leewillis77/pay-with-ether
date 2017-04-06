@@ -184,17 +184,34 @@ class Gateway extends WC_Payment_Gateway {
 	 */
 	function init_form_fields() {
 		$this->form_fields = array(
-			'basic_settings' => array(
-				'title'       => __( 'Basic settings', 'pay_with_ether' ),
-				'type'        => 'title',
-				'description' => '',
-			),
 			'enabled' => array(
 				'title'       => __( 'Enable / disable', 'pay_with_ether' ),
 				'label'       => __( 'Enable payment with Ether', 'pay_with_ether' ),
 				'type'        => 'checkbox',
 				'description' => '',
 				'default'     => 'no',
+			),
+		);
+		$this->form_fields['automate_receipts'] = array(
+			'title'       => __( 'Payment receipt automation', 'pay_with_ether' ),
+			'type'        => 'title',
+		);
+		if ( ! $this->have_api_access() ) {
+			$description = '<p><strong>' . __( '<span style="color: #900" class="dashicons dashicons-thumbs-down"></span> Not connected.', 'pay_with_ether' ) . '</strong></p>';
+			$description .= '<p>' . sprintf( __( "We can integrate with <a href='%s'>PayWithEther</a>. A service that will seamlessly monitor the Ethereum block-chain and update your orders when payment has been received. If you have an account, we'll automatically verify / re-verify your access when you save your settings.", 'pay_with_ether' ), 'https://www.paywithether.com' ) . '</p><p>' . sprintf( __( "If you don't have an account, you can <a href='%s' target='_blank'>sign up here</a> or enter your API key above.", 'pay_with_ether' ), 'https://www.paywithether.com' ) . '</p>';
+		} else {
+			$description = '<p><strong>' . __( '<span style="color: #090" class="dashicons dashicons-thumbs-up"></span> Connected.', 'pay_with_ether' ) . '</strong></p><p>' . sprintf( __( 'Last checked at %s', 'pay_with_ether' ), $this->get_api_verified_time() ) . '</p>';
+		}
+		$this->form_fields['api_key'] = array(
+			'title'       => __( 'PayWithEther API Key', 'pay_with_ether' ),
+			'type'        => 'text',
+			'description' => $description,
+		);
+		$this->form_fields += array(
+			'basic_settings' => array(
+				'title'       => __( 'Basic settings', 'pay_with_ether' ),
+				'type'        => 'title',
+				'description' => '',
 			),
 			'debug' => array(
 				'title'       => __( 'Enable debug mode', 'pay_with_ether' ),
@@ -230,7 +247,7 @@ class Gateway extends WC_Payment_Gateway {
 				'title'       => __( 'Payment instructions', 'pay_with_ether' ),
 				'type'        => 'textarea',
 				'description' => __( 'The payment instructions shown to your customers after their order has been placed, and emailed to them when ordering.', 'pay_with_ether' ),
-				'default'     => __( 'Please send the payment as per the details below. Ensure these are quoted exactly, otherwise we won\'t be able to reconcile your payment.', 'pay_with_ether' ),
+				'default'     => __( 'Please send the payment as per the details below. Ensure these are quoted exactly, otherwise we won\'t be able to reconcile your payment. Do NOT send from an exchange (like Coinbase), please read the tutorial below if you are unsure.', 'pay_with_ether' ),
 			),
 			'your_details' => array(
 				'title'       => __( 'ETH Pricing', 'pay_with_ether' ),
@@ -248,21 +265,6 @@ class Gateway extends WC_Payment_Gateway {
 					'step' => 0.5,
 				),
 			),
-		);
-		$this->form_fields['automate_receipts'] = array(
-			'title'       => __( 'Payment receipt automation', 'pay_with_ether' ),
-			'type'        => 'title',
-		);
-		if ( ! $this->have_api_access() ) {
-			$description = '<p><strong>' . __( '<span style="color: #900" class="dashicons dashicons-thumbs-down"></span> Not connected.', 'pay_with_ether' ) . '</strong></p>';
-			$description .= '<p>' . sprintf( __( "We can integrate with <a href='%s'>PayWithEther</a>. A service that will seamlessly monitor the Ethereum block-chain and update your orders when payment has been received. If you have an account, we'll automatically verify / re-verify your access when you save your settings.", 'pay_with_ether' ), 'https://www.paywithether.com' ) . '</p><p>' . sprintf( __( "If you don't have an account, you can <a href='%s' target='_blank'>sign up here</a> or enter your API key above.", 'pay_with_ether' ), 'https://www.paywithether.com' ) . '</p>';
-		} else {
-			$description = '<p><strong>' . __( '<span style="color: #090" class="dashicons dashicons-thumbs-up"></span> Connected.', 'pay_with_ether' ) . '</strong></p><p>' . sprintf( __( 'Last checked at %s', 'pay_with_ether' ), $this->get_api_verified_time() ) . '</p>';
-		}
-		$this->form_fields['api_key'] = array(
-			'title'       => __( 'PayWithEther API Key', 'pay_with_ether' ),
-			'type'        => 'text',
-			'description' => $description,
 		);
 	}
 
@@ -420,6 +422,9 @@ class Gateway extends WC_Payment_Gateway {
 			<p>
 				<?php echo esc_html( $description ); ?>
 			</p>
+			<p>
+				<a target="_blank" href="<?php echo $GLOBALS['pay_with_ether']->base_url ?>/tutorial">Tutorial</a>
+			</p>
 			<ul>
 				<li><?php _e( 'Amount', 'pay_by_ether' ); ?>: <strong><?php echo esc_html( $eth_value ); ?></strong></li>
 				<li><?php _e( 'Address', 'pay_by_ether' ); ?>: <strong><?php echo esc_html( $this->settings['payment_address'] ); ?></strong></li>
@@ -429,7 +434,7 @@ class Gateway extends WC_Payment_Gateway {
 			$min = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 			if ( apply_filters( 'pwe_pay_with_metamask_button', true ) ) {
 				?>
-				<button class="pwe-metamask-button"><img src="https://metamask.io/img/metamask.png">Pay with MetaMask</button>
+				<div class="tip-button pwe-metamask-button"></div>
 				<?php
 				wp_enqueue_script(
 					'paywithether',

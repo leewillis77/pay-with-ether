@@ -1,1 +1,1 @@
-button.pwe-metamask-button { padding: 0.7em 1em; background-color: #e6e6e6; color: #666; display: none; margin-bottom: 1em; line-height: 2em; } button.pwe-metamask-button img { float: left; margin-right: 1em; height: 24px; width: 24px; }
+.tip-button { width: 304px; height: 89px; background-size: 100%; background-image: url('../img/1_pay_mm_off.png'); cursor: pointer; margin-bottom: 20px; } .tip-button:hover { background-image: url('../img/1_pay_mm_over.png'); } .tip-button:active { background-image: url('../img/1_pay_mm_off.png'); }
