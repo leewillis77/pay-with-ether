@@ -99,6 +99,16 @@ class Main {
 		if ( ! ( $email instanceof \WC_Email_Customer_On_Hold_Order ) ) {
 			return;
 		}
+		// Check that the order was paid with this gateway.
+		if ( is_callable( array( $order, 'get_payment_method' ) ) ) {
+			$payment_method = $order->get_payment_method();
+		} else {
+			$payment_method = $order->payment_method;
+		}
+		if ( 'pay-with-ether' !== $payment_method ) {
+			return;
+		}
+		// Retrieve the info we need.
 		$settings  = get_option( 'woocommerce_pay-with-ether_settings', false );
 		if ( is_callable( array( $order, 'get_id' ) ) ) {
 			$order_id = $order->get_id();
