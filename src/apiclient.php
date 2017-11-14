@@ -36,7 +36,7 @@ class ApiClient {
 	 * @param string $api_key  The API key to use.
 	 */
 	public function __construct( $api_key ) {
-		$this->api_base = apply_filters( 'pwe_api_base', 'https://api.paywithether.com:8081/' );
+		$this->api_base = apply_filters( 'pwe_api_base', 'https://api.paywithether.com/' );
 		$this->api_key = $api_key;
 	}
 
