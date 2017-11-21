@@ -255,6 +255,10 @@ class Gateway extends WC_Payment_Gateway {
 		);
 	}
 
+	public function dust_mode_enabled () {
+		return $this->settings['dust_reference'] === 'yes';
+	}
+
 	/**
 	 * Do not allow enabling of the gateway without providing a payment address.
 	 */
@@ -318,7 +322,7 @@ class Gateway extends WC_Payment_Gateway {
 
 		// Store the ETH amount required against the order.
 		$eth_value = $stored_info['eth_value'];
-		if( $this->settings['dust_reference'] ) {
+		if( $this->dust_mode_enabled() ) {
 			$dust_amount 	= new TransactionDust( $order_id );
 			$eth_value .= $dust_amount;
 		}
@@ -351,7 +355,7 @@ class Gateway extends WC_Payment_Gateway {
 					'to'          => $this->settings['payment_address'],
 					'callbackUrl' => home_url(),
 					'ethVal'      => $eth_value,
-					'reference'   => $this->settings['dust_reference'] ? '0x' : $tx_ref->get(),
+					'reference'   => $this->dust_mode_enabled() ? '0x' : $tx_ref->get(),
 				]
 			);
 			if ( 200 === $code ) {
@@ -419,7 +423,7 @@ class Gateway extends WC_Payment_Gateway {
 			<ul>
 				<li><?php _e( 'Amount', 'pay_by_ether' ); ?>: <strong><?php echo esc_html( $eth_value ); ?></strong> ETH</li>
 				<li><?php _e( 'Address', 'pay_by_ether' ); ?>: <strong><?php echo esc_html( $this->settings['payment_address'] ); ?></strong></li>
-				<?php if ( !$this->settings['dust_reference'] ): ?>
+				<?php if ( !$this->dust_mode_enabled() ): ?>
 					<li><?php _e( 'Data', 'pay_by_ether' ); ?>: <strong><?php echo esc_html( $tx_ref->get() ); ?></strong></li>
 				<?php endif; ?>
 			</ul>
@@ -456,7 +460,7 @@ class Gateway extends WC_Payment_Gateway {
 					[
 						'payment_address' => $this->settings['payment_address'],
 						'eth_value' => $eth_value,
-						'tx_ref' => $tx_ref->get(),
+						'tx_ref' => $this->dust_mode_enabled() ? '0x' : $tx_ref->get(),
 					]
 				);
 			}
