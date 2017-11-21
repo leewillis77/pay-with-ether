@@ -22,7 +22,7 @@ class TransactionDust {
     if ( $dust ) {
       $this->dust_amount = $dust;
     } else {
-      $this->dust_amount = str_pad($order_id, 10, '0', STR_PAD_LEFT);
+      $this->dust_amount = substr(str_pad($order_id, 3, '0', STR_PAD_LEFT), -3);
       add_post_meta( $order_id, '_pwe_dust_amount', $this->dust_amount );
     }
   }
