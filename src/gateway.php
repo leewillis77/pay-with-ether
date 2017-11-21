@@ -232,8 +232,8 @@ class Gateway extends WC_Payment_Gateway {
 			'payment_description' => array(
 				'title'       => __( 'Payment instructions', 'pay_with_ether' ),
 				'type'        => 'textarea',
-				'description' => __( 'The payment instructions shown to your customers after their order has been placed, and emailed to them when ordering.', 'pay_with_ether' ),
-				'default'     => __( 'Please send the payment as per the details below. Ensure these are quoted exactly, otherwise we won\'t be able to reconcile your payment. Do NOT send from an exchange (like Coinbase), please read the tutorial below if you are unsure.', 'pay_with_ether' ),
+				'description' => __( 'The payment instructions shown to your customers after their order has been placed, and emailed to them when ordering.<br/><strong>NOTE: If you DO NOT have dust mode enabled, please ensure that your users do not send payment from an exchange.</strong>', 'pay_with_ether' ),
+				'default'     => __( 'Please send the payment as per the details below. Ensure these are quoted exactly, otherwise we won\'t be able to reconcile your payment.', 'pay_with_ether' ),
 			),
 			'your_details' => array(
 				'title'       => __( 'ETH Pricing', 'pay_with_ether' ),
