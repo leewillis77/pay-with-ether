@@ -193,6 +193,12 @@ class Gateway extends WC_Payment_Gateway {
 				'type'        => 'title',
 				'description' => '',
 			),
+			'dust_reference' => array(
+				'title'       => __( 'Payment reference', 'pay_with_ether' ),
+				'label'       => __( 'Enable dust-based reference', 'pay_with_ether' ),
+				'type'        => 'checkbox',
+				'description' => __( 'When asking your users to pay, by default they are asked to provide a reference. When paying from exchanges adding this reference is not possible, which will result in confusion, or failed orders if you are using the PayWithEther API. To get around this, you can ask your users to pay an exact, unique amount over the list price (less than $0.01), which you or the PayWithEther API can then use to identify payments.', 'pay_with_ether' ),
+			),
 			'debug' => array(
 				'title'       => __( 'Enable debug mode', 'pay_with_ether' ),
 				'label'       => __( 'Enable only if you are diagnosing problems.', 'pay_with_ether' ),
@@ -312,6 +318,10 @@ class Gateway extends WC_Payment_Gateway {
 
 		// Store the ETH amount required against the order.
 		$eth_value = $stored_info['eth_value'];
+		if( $this->settings['dust_reference'] ) {
+			$dust_amount 	= new TransactionDust( $order_id );
+			$eth_value .= $dust_amount;
+		}
 		update_post_meta( $order_id, '_pwe_eth_value', $eth_value );
 		$order->add_order_note( sprintf(
 			__( 'Order value calculated as %f ETH', 'pay_with_ether' ),
@@ -333,15 +343,15 @@ class Gateway extends WC_Payment_Gateway {
 
 		// Log the order details with the monitoring service if enabled.
 		if ( $this->have_api_access() ) {
-			$api_client = new ApiClient( $this->settings['api_key'] );
-			$tx_ref     = new TransactionReference( $order_id );
-			$code       = $api_client->post(
+			$api_client 	= new ApiClient( $this->settings['api_key'] );
+			$tx_ref     	= new TransactionReference( $order_id );
+			$code       	= $api_client->post(
 				'transaction/create',
 				[
 					'to'          => $this->settings['payment_address'],
 					'callbackUrl' => home_url(),
 					'ethVal'      => $eth_value,
-					'reference'   => $tx_ref->get(),
+					'reference'   => $this->settings['dust_reference'] ? '0x' : $tx_ref->get(),
 				]
 			);
 			if ( 200 === $code ) {
@@ -409,7 +419,9 @@ class Gateway extends WC_Payment_Gateway {
 			<ul>
 				<li><?php _e( 'Amount', 'pay_by_ether' ); ?>: <strong><?php echo esc_html( $eth_value ); ?></strong> ETH</li>
 				<li><?php _e( 'Address', 'pay_by_ether' ); ?>: <strong><?php echo esc_html( $this->settings['payment_address'] ); ?></strong></li>
-				<li><?php _e( 'Data', 'pay_by_ether' ); ?>: <strong><?php echo esc_html( $tx_ref->get() ); ?></strong></li>
+				<?php if ( !$this->settings['dust_reference'] ): ?>
+					<li><?php _e( 'Data', 'pay_by_ether' ); ?>: <strong><?php echo esc_html( $tx_ref->get() ); ?></strong></li>
+				<?php endif; ?>
 			</ul>
 			<?php
 			$min = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
