@@ -193,12 +193,6 @@ class Gateway extends WC_Payment_Gateway {
 				'type'        => 'title',
 				'description' => '',
 			),
-			'dust_reference' => array(
-				'title'       => __( 'Payment reference', 'pay_with_ether' ),
-				'label'       => __( 'Enable dust-based reference', 'pay_with_ether' ),
-				'type'        => 'checkbox',
-				'description' => __( 'When asking your users to pay, by default they are asked to provide a reference. When paying from exchanges adding this reference is not possible, which will result in confusion, or failed orders if you are using the PayWithEther API. To get around this, you can ask your users to pay an exact, unique amount over the list price (less than $0.01), which you or the PayWithEther API can then use to identify payments.', 'pay_with_ether' ),
-			),
 			'debug' => array(
 				'title'       => __( 'Enable debug mode', 'pay_with_ether' ),
 				'label'       => __( 'Enable only if you are diagnosing problems.', 'pay_with_ether' ),
@@ -232,8 +226,8 @@ class Gateway extends WC_Payment_Gateway {
 			'payment_description' => array(
 				'title'       => __( 'Payment instructions', 'pay_with_ether' ),
 				'type'        => 'textarea',
-				'description' => __( 'The payment instructions shown to your customers after their order has been placed, and emailed to them when ordering.<br/><strong>NOTE: If you DO NOT have dust mode enabled, please ensure that your users do not send payment from an exchange.</strong>', 'pay_with_ether' ),
-				'default'     => __( 'Please send the payment as per the details below. Ensure these are quoted exactly, otherwise we won\'t be able to reconcile your payment.', 'pay_with_ether' ),
+				'description' => __( 'The payment instructions shown to your customers after their order has been placed, and emailed to them when ordering.', 'pay_with_ether' ),
+				'default'     => __( 'Please send the payment as per the details below. Ensure these are quoted exactly, otherwise we won\'t be able to reconcile your payment. Data is unnecessary if the payment is exact.', 'pay_with_ether' ),
 			),
 			'your_details' => array(
 				'title'       => __( 'ETH Pricing', 'pay_with_ether' ),
@@ -253,10 +247,6 @@ class Gateway extends WC_Payment_Gateway {
 				),
 			),
 		);
-	}
-
-	public function dust_mode_enabled () {
-		return $this->settings['dust_reference'] === 'yes';
 	}
 
 	/**
@@ -322,10 +312,7 @@ class Gateway extends WC_Payment_Gateway {
 
 		// Store the ETH amount required against the order.
 		$eth_value = $stored_info['eth_value'];
-		if( $this->dust_mode_enabled() ) {
-			$dust_amount 	= new TransactionDust( $order_id );
-			$eth_value .= $dust_amount;
-		}
+		$dust_amount 	= new TransactionDust( $order_id );
 		update_post_meta( $order_id, '_pwe_eth_value', $eth_value );
 		$order->add_order_note( sprintf(
 			__( 'Order value calculated as %f ETH', 'pay_with_ether' ),
@@ -355,7 +342,8 @@ class Gateway extends WC_Payment_Gateway {
 					'to'          => $this->settings['payment_address'],
 					'callbackUrl' => home_url(),
 					'ethVal'      => $eth_value,
-					'reference'   => $this->dust_mode_enabled() ? '0x' : $tx_ref->get(),
+					'reference'   => $tx_ref->get(),
+					'dustAmount' 	=> $dust_amount->get()
 				]
 			);
 			if ( 200 === $code ) {
@@ -404,11 +392,14 @@ class Gateway extends WC_Payment_Gateway {
 		$order       = new WC_Order( $order_id );
 		if ( is_callable( array( $order, 'get_meta' ) ) ) {
 			$eth_value   = $order->get_meta( '_pwe_eth_value' );
+			$dust 			 = $order->get_meta( '_pwe_dust_amount' );
 		} else {
 			$eth_value = get_post_meta( $order_id, '_pwe_eth_value', true );
+			$dust = get_post_meta( $order_id, '_pwe_dust_amount', true );
 		}
-		$description = $this->settings['payment_description'];
-		$tx_ref      = new TransactionReference( $order_id );
+		$eth_value_with_dust 	= $eth_value .= $dust;
+		$description 					= $this->settings['payment_description'];
+		$tx_ref      					= new TransactionReference( $order_id );
 
 		// Output everything.
 		?>
@@ -421,11 +412,9 @@ class Gateway extends WC_Payment_Gateway {
 				<a target="_blank" href="https://www.paywithether.com/tutorial"><?php _e( 'Tutorial', 'pay_with_ether' ); ?></a>
 			</p>
 			<ul>
-				<li><?php _e( 'Amount', 'pay_by_ether' ); ?>: <strong><?php echo esc_html( $eth_value ); ?></strong> ETH</li>
+				<li><?php _e( 'Amount', 'pay_by_ether' ); ?>: <strong><?php echo esc_html( $eth_value_with_dust ); ?></strong> ETH</li>
 				<li><?php _e( 'Address', 'pay_by_ether' ); ?>: <strong><?php echo esc_html( $this->settings['payment_address'] ); ?></strong></li>
-				<?php if ( !$this->dust_mode_enabled() ): ?>
-					<li><?php _e( 'Data', 'pay_by_ether' ); ?>: <strong><?php echo esc_html( $tx_ref->get() ); ?></strong></li>
-				<?php endif; ?>
+				<li><?php _e( 'Data', 'pay_by_ether' ); ?>: <strong><?php echo esc_html( $tx_ref->get() ); ?></strong></li>
 			</ul>
 			<?php
 			$min = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
@@ -460,7 +449,7 @@ class Gateway extends WC_Payment_Gateway {
 					[
 						'payment_address' => $this->settings['payment_address'],
 						'eth_value' => $eth_value,
-						'tx_ref' => $this->dust_mode_enabled() ? '0x' : $tx_ref->get(),
+						'tx_ref' => $tx_ref->get(),
 					]
 				);
 			}
