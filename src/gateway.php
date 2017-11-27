@@ -396,12 +396,12 @@ class Gateway extends WC_Payment_Gateway {
 		$order       = new WC_Order( $order_id );
 		if ( is_callable( array( $order, 'get_meta' ) ) ) {
 			$eth_value   = $order->get_meta( '_pwe_eth_value' );
-			$dust 			 = $order->get_meta( '_pwe_dust_amount' );
+			$dust_amount = $order->get_meta( '_pwe_dust_amount' );
 		} else {
-			$eth_value = get_post_meta( $order_id, '_pwe_eth_value', true );
-			$dust = get_post_meta( $order_id, '_pwe_dust_amount', true );
+			$eth_value   = get_post_meta( $order_id, '_pwe_eth_value', true );
+			$dust_amount = get_post_meta( $order_id, '_pwe_dust_amount', true );
 		}
-		$eth_value_with_dust 	= $eth_value .= $dust;
+		$eth_value_with_dust = $eth_value .= $dust_amount;
 		$description         = $this->settings['payment_description'];
 		$tx_ref              = new TransactionReference( $order_id );
 
