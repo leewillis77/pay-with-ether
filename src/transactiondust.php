@@ -18,11 +18,13 @@ class TransactionDust {
 	 * @param int $order_id  The order ID to generate a dust amount for.
 	 */
 	public function __construct( $order_id ) {
-		$dust = get_post_meta( $order_id, '_pwe_dust_amount', true );
-		if ( $dust ) {
-			$this->dust_amount = $dust;
-		} else {
-			$this->dust_amount = substr(str_pad($order_id, 3, '0', STR_PAD_LEFT), -3);
+		$this->dust_amount = get_post_meta( $order_id, '_pwe_dust_amount', true );
+		if ( $this->dust_amount === '' )
+			$this->dust_amount = apply_filters(
+				'pwe_dust_amount',
+				substr( str_pad( $order_id, 3, '0', STR_PAD_LEFT ), -3 ),
+				$order_id
+			);
 			add_post_meta( $order_id, '_pwe_dust_amount', $this->dust_amount );
 		}
 	}
