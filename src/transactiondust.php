@@ -20,9 +20,9 @@ class TransactionDust {
 	public function __construct( $order_id ) {
 		$this->dust_amount = get_post_meta( $order_id, '_pwe_dust_amount', true );
 		if ( $this->dust_amount === '' ) {
-			$this->dust_amount = apply_filters(
+			$this->dust_amount = (string) apply_filters(
 				'pwe_dust_amount',
-				substr( str_pad( $order_id, 3, '0', STR_PAD_LEFT ), -3 ),
+				"0.00000"  . substr( str_pad( $order_id, 3, '0', STR_PAD_LEFT ), -3 ),
 				$order_id
 			);
 			add_post_meta( $order_id, '_pwe_dust_amount', $this->dust_amount );
@@ -31,15 +31,17 @@ class TransactionDust {
 
 	/**
 	 * Return the dust amount if we're cast to a string.
+	 *
+	 * @return string
 	 */
 	public function __toString() {
-		return (string) $this->dust_amount;
+		return $this->dust_amount;
 	}
 
 	/**
 	 * Allow the dust amount to be explicitly returned.
 	 */
 	public function get() {
-		return (string) $this->dust_amount;
+		return $this->dust_amount;
 	}
 }

@@ -347,7 +347,7 @@ class Gateway extends WC_Payment_Gateway {
 					'callbackUrl' => home_url(),
 					'ethVal'      => $eth_value,
 					'reference'   => $tx_ref->get(),
-					'dustAmount' 	=> $dust_amount,
+					'dustAmount'  => $dust_amount,
 				]
 			);
 			if ( 200 === $code ) {
@@ -401,7 +401,7 @@ class Gateway extends WC_Payment_Gateway {
 			$eth_value   = get_post_meta( $order_id, '_pwe_eth_value', true );
 			$dust_amount = get_post_meta( $order_id, '_pwe_dust_amount', true );
 		}
-		$eth_value_with_dust = $eth_value .= $dust_amount;
+		$eth_value_with_dust = $eth_value + $dust_amount;
 		$description         = $this->settings['payment_description'];
 		$tx_ref              = new TransactionReference( $order_id );
 
