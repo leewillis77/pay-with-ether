@@ -227,7 +227,7 @@ class Gateway extends WC_Payment_Gateway {
 				'title'       => __( 'Payment instructions', 'pay_with_ether' ),
 				'type'        => 'textarea',
 				'description' => __( 'The payment instructions shown to your customers after their order has been placed, and emailed to them when ordering.', 'pay_with_ether' ),
-				'default'     => __( 'Please send the payment as per the details below. Ensure these are quoted exactly, otherwise we won\'t be able to reconcile your payment. Do NOT send from an exchange (like Coinbase), please read the tutorial below if you are unsure.', 'pay_with_ether' ),
+				'default'     => __( 'Please send the payment as per the details below. Ensure these are quoted exactly, otherwise we won\'t be able to reconcile your payment. Data is unnecessary if the payment is exact.', 'pay_with_ether' ),
 			),
 			'your_details' => array(
 				'title'       => __( 'ETH Pricing', 'pay_with_ether' ),
@@ -312,6 +312,7 @@ class Gateway extends WC_Payment_Gateway {
 
 		// Store the ETH amount required against the order.
 		$eth_value = $stored_info['eth_value'];
+		$dust_amount 	= new TransactionDust( $order_id );
 		update_post_meta( $order_id, '_pwe_eth_value', $eth_value );
 		$order->add_order_note( sprintf(
 			__( 'Order value calculated as %f ETH', 'pay_with_ether' ),
@@ -333,15 +334,16 @@ class Gateway extends WC_Payment_Gateway {
 
 		// Log the order details with the monitoring service if enabled.
 		if ( $this->have_api_access() ) {
-			$api_client = new ApiClient( $this->settings['api_key'] );
-			$tx_ref     = new TransactionReference( $order_id );
-			$code       = $api_client->post(
+			$api_client 	= new ApiClient( $this->settings['api_key'] );
+			$tx_ref     	= new TransactionReference( $order_id );
+			$code       	= $api_client->post(
 				'transaction/create',
 				[
 					'to'          => $this->settings['payment_address'],
 					'callbackUrl' => home_url(),
 					'ethVal'      => $eth_value,
 					'reference'   => $tx_ref->get(),
+					'dustAmount' 	=> $dust_amount->get()
 				]
 			);
 			if ( 200 === $code ) {
@@ -390,11 +392,14 @@ class Gateway extends WC_Payment_Gateway {
 		$order       = new WC_Order( $order_id );
 		if ( is_callable( array( $order, 'get_meta' ) ) ) {
 			$eth_value   = $order->get_meta( '_pwe_eth_value' );
+			$dust 			 = $order->get_meta( '_pwe_dust_amount' );
 		} else {
 			$eth_value = get_post_meta( $order_id, '_pwe_eth_value', true );
+			$dust = get_post_meta( $order_id, '_pwe_dust_amount', true );
 		}
-		$description = $this->settings['payment_description'];
-		$tx_ref      = new TransactionReference( $order_id );
+		$eth_value_with_dust 	= $eth_value .= $dust;
+		$description 					= $this->settings['payment_description'];
+		$tx_ref      					= new TransactionReference( $order_id );
 
 		// Output everything.
 		?>
@@ -407,7 +412,7 @@ class Gateway extends WC_Payment_Gateway {
 				<a target="_blank" href="https://www.paywithether.com/tutorial"><?php _e( 'Tutorial', 'pay_with_ether' ); ?></a>
 			</p>
 			<ul>
-				<li><?php _e( 'Amount', 'pay_by_ether' ); ?>: <strong><?php echo esc_html( $eth_value ); ?></strong> ETH</li>
+				<li><?php _e( 'Amount', 'pay_by_ether' ); ?>: <strong><?php echo esc_html( $eth_value_with_dust ); ?></strong> ETH</li>
 				<li><?php _e( 'Address', 'pay_by_ether' ); ?>: <strong><?php echo esc_html( $this->settings['payment_address'] ); ?></strong></li>
 				<li><?php _e( 'Data', 'pay_by_ether' ); ?>: <strong><?php echo esc_html( $tx_ref->get() ); ?></strong></li>
 			</ul>
