@@ -8,7 +8,7 @@ class TransactionDust {
 	 *
 	 * @var string
 	 */
-	private $tx_dust;
+	private $dust_amount;
 
 	/**
 	 * Constructor.
