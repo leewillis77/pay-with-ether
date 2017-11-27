@@ -311,8 +311,11 @@ class Gateway extends WC_Payment_Gateway {
 		);
 
 		// Store the ETH amount required against the order.
-		$eth_value = $stored_info['eth_value'];
-		$dust_amount 	= new TransactionDust( $order_id );
+		$eth_value   = $stored_info['eth_value'];
+
+		// Generate a dust amount for validating the payment.
+		$dust_amount = new TransactionDust( $order_id );
+
 		update_post_meta( $order_id, '_pwe_eth_value', $eth_value );
 		$order->add_order_note( sprintf(
 			__( 'Order value calculated as %f ETH', 'pay_with_ether' ),
