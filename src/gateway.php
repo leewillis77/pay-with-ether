@@ -314,7 +314,8 @@ class Gateway extends WC_Payment_Gateway {
 		$eth_value   = $stored_info['eth_value'];
 
 		// Generate a dust amount for validating the payment.
-		$dust_amount = new TransactionDust( $order_id );
+		$dust = new TransactionDust( $order_id );
+		$dust_amount = $dust->get();
 
 		update_post_meta( $order_id, '_pwe_eth_value', $eth_value );
 		$order->add_order_note( sprintf(
@@ -346,7 +347,7 @@ class Gateway extends WC_Payment_Gateway {
 					'callbackUrl' => home_url(),
 					'ethVal'      => $eth_value,
 					'reference'   => $tx_ref->get(),
-					'dustAmount' 	=> $dust_amount->get()
+					'dustAmount' 	=> $dust_amount,
 				]
 			);
 			if ( 200 === $code ) {

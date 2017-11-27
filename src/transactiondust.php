@@ -19,7 +19,7 @@ class TransactionDust {
 	 */
 	public function __construct( $order_id ) {
 		$this->dust_amount = get_post_meta( $order_id, '_pwe_dust_amount', true );
-		if ( $this->dust_amount === '' )
+		if ( $this->dust_amount === '' ) {
 			$this->dust_amount = apply_filters(
 				'pwe_dust_amount',
 				substr( str_pad( $order_id, 3, '0', STR_PAD_LEFT ), -3 ),
