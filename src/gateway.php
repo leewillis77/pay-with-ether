@@ -452,7 +452,7 @@ class Gateway extends WC_Payment_Gateway {
 					'pwe',
 					[
 						'payment_address' => $this->settings['payment_address'],
-						'eth_value' => $eth_value,
+						'eth_value' => $eth_value_with_dust,
 						'tx_ref' => $tx_ref->get(),
 					]
 				);
