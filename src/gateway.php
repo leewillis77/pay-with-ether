@@ -246,6 +246,18 @@ class Gateway extends WC_Payment_Gateway {
 					'step' => 0.5,
 				),
 			),
+			'transaction_timeout' => array(
+				'title'    => __( 'Timeout in minutes for PayWithEther orders', 'pay_with_ether' ),
+		 		'description'     => __( 'PayWithEther automatically times an order out after 20 minutes. If you would like the API to wait for longer before timing out the transaction, please specify that here. This only applies if you are using the PayWithEther API service.', 'pay_with_ether' ),
+				'default'  => '20',
+				'type'     => 'number',
+				'css'      => 'width:100px;',
+				'custom_attributes' => array(
+					'min'  => 10,
+					'max'  => 1440, // one day
+					'step' => 1,
+				),
+			),
 		);
 	}
 
@@ -340,14 +352,16 @@ class Gateway extends WC_Payment_Gateway {
 		if ( $this->have_api_access() ) {
 			$api_client = new ApiClient( $this->settings['api_key'] );
 			$tx_ref     = new TransactionReference( $order_id );
+			$tx_timeout = ($this->settings['transaction_timeout'] * 60);
 			$code       = $api_client->post(
 				'transaction/create',
 				[
-					'to'          => $this->settings['payment_address'],
-					'callbackUrl' => home_url(),
-					'ethVal'      => $eth_value,
-					'reference'   => $tx_ref->get(),
-					'dustAmount'  => $dust_amount,
+					'to'          	=> $this->settings['payment_address'],
+					'callbackUrl'		=> home_url(),
+					'ethVal'      	=> $eth_value,
+					'reference'   	=> $tx_ref->get(),
+					'dustAmount'  	=> $dust_amount,
+					'timeoutInSecs' => $tx_timeout
 				]
 			);
 			if ( 200 === $code ) {
