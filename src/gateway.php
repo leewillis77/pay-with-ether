@@ -246,18 +246,6 @@ class Gateway extends WC_Payment_Gateway {
 					'step' => 0.5,
 				),
 			),
-			'transaction_timeout' => array(
-				'title'    => __( 'Timeout in minutes for PayWithEther orders', 'pay_with_ether' ),
-		 		'description'     => __( 'PayWithEther automatically times an order out after 20 minutes. If you would like the API to wait for longer before timing out the transaction, please specify that here. This only applies if you are using the PayWithEther API service.', 'pay_with_ether' ),
-				'default'  => '20',
-				'type'     => 'number',
-				'css'      => 'width:100px;',
-				'custom_attributes' => array(
-					'min'  => 10,
-					'max'  => 1440, // one day
-					'step' => 1,
-				),
-			),
 		);
 	}
 
