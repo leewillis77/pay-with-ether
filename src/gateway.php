@@ -340,8 +340,8 @@ class Gateway extends WC_Payment_Gateway {
 		if ( $this->have_api_access() ) {
 			$api_client = new ApiClient( $this->settings['api_key'] );
 			$tx_ref     = new TransactionReference( $order_id );
-			// 3000 seconds = 50 minutes
-			$timeout    = apply_filters( 'pwe_transaction_timeout', 3000, $order_id );
+			// 86400 seconds = 1 day
+			$timeout    = apply_filters( 'pwe_transaction_timeout', 86400, $order_id );
 			$code       = $api_client->post(
 				'transaction/create',
 				[
