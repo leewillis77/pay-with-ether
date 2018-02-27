@@ -115,7 +115,15 @@ class Main {
 		} else {
 			$order_id = $order->id;
 		}
-		$eth_value = get_post_meta( $order_id, '_pwe_eth_value', true );
+		if ( is_callable( array( $order, 'get_meta' ) ) ) {
+			$eth_value   = $order->get_meta( '_pwe_eth_value' );
+			$dust_amount = $order->get_meta( '_pwe_dust_amount' );
+		} else {
+			$eth_value   = get_post_meta( $order_id, '_pwe_eth_value', true );
+			$dust_amount = get_post_meta( $order_id, '_pwe_dust_amount', true );
+		}
+		$eth_value_with_dust = $eth_value + $dust_amount;
+
 		$tx_ref    = new TransactionReference( $order_id );
 		if ( false === $settings || false === $eth_value ) {
 			return;
@@ -124,7 +132,7 @@ class Main {
 		echo esc_html( $settings['payment_description'] );
 		?>
 		<ul>
-			<li><?php _e( 'Amount', 'pay_by_ether' ); ?>: <strong><?php echo esc_html( $eth_value ); ?></strong> ETH</li>
+			<li><?php _e( 'Amount', 'pay_by_ether' ); ?>: <strong><?php echo esc_html( $eth_value_with_dust ); ?></strong> ETH</li>
 			<li><?php _e( 'Address', 'pay_by_ether' ); ?>: <strong><?php echo esc_html( $settings['payment_address'] ); ?></strong></li>
 			<li><?php _e( 'Data', 'pay_by_ether' ); ?>: <strong><?php echo esc_html( $tx_ref->get() ); ?></strong></li>
 		</ul>
