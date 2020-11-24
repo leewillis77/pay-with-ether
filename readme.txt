@@ -1,8 +1,8 @@
 === Pay With Ether for WooCommerce ===
 Contributors: leewillis77,morelazers,porridj
 Tags: e-commerce, payment, crypto, ethereum, ether, woocommerce
-Requires at least: 4.7
-Tested up to: 5.5
+Requires at least: 5.4
+Tested up to: 5.6
 License: GPL v2
 Stable tag: 1.3.2
 
