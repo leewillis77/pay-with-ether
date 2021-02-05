@@ -32,6 +32,9 @@ Features:
 
 == Changelog ==
 
+= 1 3.4 =
+* Fix issue where empty markup setting could generate warnings.
+
 = 1.3.3 =
 * WooCommerce compatibility updates.
 
