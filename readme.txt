@@ -4,7 +4,7 @@ Tags: e-commerce, payment, crypto, ethereum, ether, woocommerce
 Requires at least: 5.4
 Tested up to: 5.6
 License: GPL v2
-Stable tag: 1.3.3
+Stable tag: 1.3.4
 
 Pay with Ether enables customers to pay with Ether on your WooCommerce store.
 
