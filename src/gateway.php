@@ -249,14 +249,15 @@ class Gateway extends WC_Payment_Gateway {
 			),
 			'markup_percent'      => array(
 				'title'             => __( 'Mark ETH price up by %', 'pay_with_ether' ),
-				'description'       => __( 'To help cover currency fluctuations the plugin can automatically mark up converted rates for you. These are applied as percentage markup, so a 1ETH value with a 1.00% markup will be presented to the customer as 1.01ETH.', 'pay_with_ether' ),
+				'description'       => __( 'To help cover currency fluctuations the plugin can automatically mark up converted rates for you. These are applied as percentage markup, so a 1ETH value with a 1.00% markup will be presented to the customer as 1.01ETH. Enter 0 for no markup.', 'pay_with_ether' ),
 				'default'           => '2.0',
 				'type'              => 'number',
 				'css'               => 'width:100px;',
 				'custom_attributes' => array(
-					'min'  => - 100,
-					'max'  => 100,
-					'step' => 0.5,
+					'min'      => - 100,
+					'max'      => 100,
+					'step'     => 0.5,
+					'required' => 'required',
 				),
 			),
 		);
