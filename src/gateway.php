@@ -31,12 +31,18 @@ class Gateway extends WC_Payment_Gateway {
 		$this->init_settings();
 
 		// Set the public facing title according to the user's setting.
-		$this->title = $this->settings['title'];
+		$this->title       = $this->settings['title'];
 		$this->description = $this->settings['short_description'];
 
 		// Save options from admin forms.
-		add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
-		add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'verify_api_connection' ) );
+		add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array(
+			$this,
+			'process_admin_options'
+		) );
+		add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array(
+			$this,
+			'verify_api_connection'
+		) );
 
 		// Show gateway icon.
 		add_filter( 'woocommerce_gateway_icon', array( $this, 'show_icons' ), 10, 2 );
@@ -48,8 +54,8 @@ class Gateway extends WC_Payment_Gateway {
 	/**
 	 * Output the logo.
 	 *
-	 * @param  string $icon    The default WC-generated icon.
-	 * @param  string $gateway The gateway the icons are for.
+	 * @param string $icon The default WC-generated icon.
+	 * @param string $gateway The gateway the icons are for.
 	 *
 	 * @return string          The HTML for the selected iconsm or empty string if none
 	 */
@@ -58,6 +64,7 @@ class Gateway extends WC_Payment_Gateway {
 			return $icon;
 		}
 		$img_url = $GLOBALS['pay_with_ether']->base_url . '/img/etherium-icon.png';
+
 		return '<img src="' . esc_attr( $img_url ) . '" width="25" height="25">';
 	}
 
@@ -65,7 +72,7 @@ class Gateway extends WC_Payment_Gateway {
 	 * Tell the user how much their order will cost if they pay by ETH.
 	 */
 	public function payment_fields() {
-		$total = WC()->cart->total;
+		$total    = WC()->cart->total;
 		$currency = get_woocommerce_currency();
 		try {
 			$convertor = new CurrencyConvertor( $currency, 'ETH' );
@@ -112,15 +119,17 @@ class Gateway extends WC_Payment_Gateway {
 		$validity_period = apply_filters( 'pwe_checkout_validity_time', 900 );
 		if ( $price_info['timestamp'] + $validity_period < time() ) {
 			wc_add_notice( __( 'ETH price quote has been updated, please check and confirm before proceeding.', 'pay_with_ether' ), 'error' );
+
 			return false;
 		}
+
 		return true;
 	}
 
 	/**
 	 * Mark up a price by the configured amount.
 	 *
-	 * @param  float $price  The price to be marked up.
+	 * @param float $price The price to be marked up.
 	 *
 	 * @return float         The marked up price.
 	 */
@@ -139,13 +148,14 @@ class Gateway extends WC_Payment_Gateway {
 	 */
 	private function have_api_access() {
 		$api_verified_at = get_option( 'pwe_api_verified', false );
+
 		return false !== $api_verified_at;
 	}
 
 	/**
 	 * Get the time that the API was last verified.
 	 *
-	 * @param  boolean $formatted  True for a human-formatted date/time, false
+	 * @param boolean $formatted True for a human-formatted date/time, false
 	 *                             for a UNIX timestamp.
 	 *
 	 * @return string              Time.
@@ -161,11 +171,12 @@ class Gateway extends WC_Payment_Gateway {
 			return $api_verified_at;
 		}
 	}
+
 	/**
 	 * Initialise Gateway Settings Form Fields
 	 */
 	function init_form_fields() {
-		$this->form_fields = array(
+		$this->form_fields                      = array(
 			'enabled' => array(
 				'title'       => __( 'Enable / disable', 'pay_with_ether' ),
 				'label'       => __( 'Enable payment with Ether', 'pay_with_ether' ),
@@ -175,8 +186,8 @@ class Gateway extends WC_Payment_Gateway {
 			),
 		);
 		$this->form_fields['automate_receipts'] = array(
-			'title'       => __( 'Payment receipt automation', 'pay_with_ether' ),
-			'type'        => 'title',
+			'title' => __( 'Payment receipt automation', 'pay_with_ether' ),
+			'type'  => 'title',
 		);
 		if ( ! $this->have_api_access() ) {
 			$description = '<p><strong>' . __( '<span style="color: #900" class="dashicons dashicons-thumbs-down"></span> Not connected.', 'pay_with_ether' ) . '</strong></p>';
@@ -189,37 +200,37 @@ class Gateway extends WC_Payment_Gateway {
 			'type'        => 'text',
 			'description' => $description,
 		);
-		$this->form_fields += array(
-			'basic_settings' => array(
+		$this->form_fields            += array(
+			'basic_settings'      => array(
 				'title'       => __( 'Basic settings', 'pay_with_ether' ),
 				'type'        => 'title',
 				'description' => '',
 			),
-			'debug' => array(
+			'debug'               => array(
 				'title'       => __( 'Enable debug mode', 'pay_with_ether' ),
 				'label'       => __( 'Enable only if you are diagnosing problems.', 'pay_with_ether' ),
 				'type'        => 'checkbox',
 				'description' => sprintf( __( 'Log interactions inside <code>%s</code>', 'pay_with_ether' ), wc_get_log_file_path( $this->id ) ),
 				'default'     => 'no',
 			),
-			'title' => array(
+			'title'               => array(
 				'title'       => __( 'Title', 'pay_with_ether' ),
 				'type'        => 'text',
 				'description' => __( 'This controls the name of the payment option that the user sees during checkout.', 'pay_with_ether' ),
 				'default'     => __( 'Pay with ETH', 'pay_with_ether' ),
 			),
-			'short_description' => array(
+			'short_description'   => array(
 				'title'       => __( 'Short description', 'pay_with_ether' ),
 				'type'        => 'textarea',
 				'description' => __( 'This controls the description of the payment option that the user sees during checkout.', 'pay_with_ether' ),
 				'default'     => 'Pay with your Ether (ETH).',
 			),
-			'your_details' => array(
+			'your_details'        => array(
 				'title'       => __( 'Payment details', 'pay_with_ether' ),
 				'type'        => 'title',
 				'description' => '',
 			),
-			'payment_address' => array(
+			'payment_address'     => array(
 				'title'       => __( 'Your ethereum address', 'pay_with_ether' ),
 				'type'        => 'text',
 				'description' => __( 'The ethereum address your customers should send payment to.', 'pay_with_ether' ),
@@ -231,19 +242,19 @@ class Gateway extends WC_Payment_Gateway {
 				'description' => __( 'The payment instructions shown to your customers after their order has been placed, and emailed to them when ordering.', 'pay_with_ether' ),
 				'default'     => __( 'Please send the payment as per the details below. Ensure these are quoted exactly, otherwise we won\'t be able to reconcile your payment. Data is unnecessary if the payment is exact.', 'pay_with_ether' ),
 			),
-			'your_details' => array(
+			'your_details'        => array(
 				'title'       => __( 'ETH Pricing', 'pay_with_ether' ),
 				'type'        => 'title',
 				'description' => '',
 			),
-			'markup_percent' => array(
-				'title'    => __( 'Mark ETH price up by %', 'pay_with_ether' ),
-				'description'     => __( 'To help cover currency fluctuations the plugin can automatically mark up converted rates for you. These are applied as percentage markup, so a 1ETH value with a 1.00% markup will be presented to the customer as 1.01ETH.', 'pay_with_ether' ),
-				'default'  => '2.0',
-				'type'     => 'number',
-				'css'      => 'width:100px;',
+			'markup_percent'      => array(
+				'title'             => __( 'Mark ETH price up by %', 'pay_with_ether' ),
+				'description'       => __( 'To help cover currency fluctuations the plugin can automatically mark up converted rates for you. These are applied as percentage markup, so a 1ETH value with a 1.00% markup will be presented to the customer as 1.01ETH.', 'pay_with_ether' ),
+				'default'           => '2.0',
+				'type'              => 'number',
+				'css'               => 'width:100px;',
 				'custom_attributes' => array(
-					'min'  => -100,
+					'min'  => - 100,
 					'max'  => 100,
 					'step' => 0.5,
 				),
@@ -259,11 +270,13 @@ class Gateway extends WC_Payment_Gateway {
 		if ( $value ) {
 			if ( empty( $post_data['woocommerce_pay-with-ether_payment_address'] ) ) {
 				WC_Admin_Settings::add_error( 'You must provide an Ethereum address before enabling the gateway' );
+
 				return 'no';
 			} else {
 				return 'yes';
 			}
 		}
+
 		return 'no';
 	}
 
@@ -272,11 +285,11 @@ class Gateway extends WC_Payment_Gateway {
 	 */
 	public function admin_options() {
 		?>
-		<h3><?php _e( 'Pay with Ether', 'pay_with_ether' ); ?></h3>
-		<p><?php echo sprintf( __( 'Your customers will be given instructions about where, and how much to pay. Your orders will be marked as pending when they are placed. Once you\'ve received payment, you can update your orders on the <a href="%s">WooCommerce Orders</a> page.', 'pay_with_ether' ), admin_url( 'edit.php?post_type=shop_order' ) ); ?></p>
-		<table class="form-table">
+        <h3><?php _e( 'Pay with Ether', 'pay_with_ether' ); ?></h3>
+        <p><?php echo sprintf( __( 'Your customers will be given instructions about where, and how much to pay. Your orders will be marked as pending when they are placed. Once you\'ve received payment, you can update your orders on the <a href="%s">WooCommerce Orders</a> page.', 'pay_with_ether' ), admin_url( 'edit.php?post_type=shop_order' ) ); ?></p>
+        <table class="form-table">
 			<?php $this->generate_settings_html(); ?>
-		</table><!--/.form-table-->
+        </table><!--/.form-table-->
 		<?php
 	}
 
@@ -286,10 +299,11 @@ class Gateway extends WC_Payment_Gateway {
 	public function verify_api_connection() {
 		if ( empty( $this->settings['api_key'] ) ) {
 			delete_option( 'pwe_api_verified' );
+
 			return;
 		}
 		$api_client = new ApiClient( $this->settings['api_key'] );
-		$code = $api_client->post( 'user/auth' );
+		$code       = $api_client->post( 'user/auth' );
 		$GLOBALS['pay_with_ether']->log( 'Verifying API connection, received code : ' . $code );
 		$GLOBALS['pay_with_ether']->log( 'Verifying API connection, received response : ' . print_r( $api_client->get_response_body(), 1 ) );
 	}
@@ -297,7 +311,7 @@ class Gateway extends WC_Payment_Gateway {
 	/**
 	 * Process the payment.
 	 *
-	 * @param int $order_id  The order ID to update.
+	 * @param int $order_id The order ID to update.
 	 */
 	function process_payment( $order_id ) {
 
@@ -313,10 +327,10 @@ class Gateway extends WC_Payment_Gateway {
 		);
 
 		// Store the ETH amount required against the order.
-		$eth_value   = $stored_info['eth_value'];
+		$eth_value = $stored_info['eth_value'];
 
 		// Generate a dust amount for validating the payment.
-		$dust = new TransactionDust( $order_id );
+		$dust        = new TransactionDust( $order_id );
 		$dust_amount = $dust->get();
 
 		update_post_meta( $order_id, '_pwe_eth_value', $eth_value );
@@ -343,8 +357,8 @@ class Gateway extends WC_Payment_Gateway {
 			$api_client = new ApiClient( $this->settings['api_key'] );
 			$tx_ref     = new TransactionReference( $order_id );
 			// 3000 seconds = 50 minutes
-			$timeout    = apply_filters( 'pwe_transaction_timeout', 3000, $order_id );
-			$code       = $api_client->post(
+			$timeout = apply_filters( 'pwe_transaction_timeout', 3000, $order_id );
+			$code    = $api_client->post(
 				'transaction/create',
 				[
 					'to'            => $this->settings['payment_address'],
@@ -358,7 +372,7 @@ class Gateway extends WC_Payment_Gateway {
 			if ( 200 === $code ) {
 				$response = $api_client->get_response_body();
 				$response = json_decode( $response );
-				$tx_id     = $response->data->txId;
+				$tx_id    = $response->data->txId;
 				$order->add_order_note( sprintf(
 					__( 'Order details submitted to PayWithEther.com for monitoring. txId %s', 'pay_with_ether' ),
 					$tx_id
@@ -378,7 +392,7 @@ class Gateway extends WC_Payment_Gateway {
 			$redirect = $order->get_checkout_order_received_url();
 		} else {
 			if ( is_callable( array( $order, 'get_id' ) ) &&
-			     is_callable( array( $order, 'get_order_key' ) ) ) {
+				 is_callable( array( $order, 'get_order_key' ) ) ) {
 				$redirect = add_query_arg( 'key', $order->get_order_key(), add_query_arg( 'order', $order->get_id(), get_permalink( get_option( 'woocommerce_thanks_page_id' ) ) ) );
 			} else {
 				$redirect = add_query_arg( 'key', $order->order_key, add_query_arg( 'order', $order->id, get_permalink( get_option( 'woocommerce_thanks_page_id' ) ) ) );
@@ -387,18 +401,18 @@ class Gateway extends WC_Payment_Gateway {
 
 		// Return thank you page redirect.
 		return array(
-			'result'    => 'success',
-			'redirect'  => $redirect,
+			'result'   => 'success',
+			'redirect' => $redirect,
 		);
 	}
 
 	/**
 	 * Output the payment information onto the thank you page.
 	 *
-	 * @param  int $order_id  The order ID.
+	 * @param int $order_id The order ID.
 	 */
 	public function thank_you_page( $order_id ) {
-		$order       = new WC_Order( $order_id );
+		$order = new WC_Order( $order_id );
 		if ( is_callable( array( $order, 'get_meta' ) ) ) {
 			$eth_value   = $order->get_meta( '_pwe_eth_value' );
 			$dust_amount = $order->get_meta( '_pwe_dust_amount' );
@@ -412,35 +426,42 @@ class Gateway extends WC_Payment_Gateway {
 
 		// Output everything.
 		?>
-		<section class="pwe-payment-instructions">
-			<h2>Pay with Ether</h2>
-			<p>
+        <section class="pwe-payment-instructions">
+            <h2>Pay with Ether</h2>
+            <p>
 				<?php echo esc_html( $description ); ?>
-			</p>
-			<p class="pwe-tutorial-link">
-				<a target="_blank" href="https://www.paywithether.com/tutorial"><?php _e( 'Tutorial', 'pay_with_ether' ); ?></a>
-			</p>
-			<ul>
-				<li><?php _e( 'Amount', 'pay_by_ether' ); ?>: <strong><?php echo esc_html( $eth_value_with_dust ); ?></strong> ETH</li>
-				<li><?php _e( 'Address', 'pay_by_ether' ); ?>: <strong><?php echo esc_html( $this->settings['payment_address'] ); ?></strong></li>
-				<li><?php _e( 'Data', 'pay_by_ether' ); ?>: <strong><?php echo esc_html( $tx_ref->get() ); ?></strong></li>
-			</ul>
+            </p>
+            <p class="pwe-tutorial-link">
+                <a target="_blank"
+                   href="https://www.paywithether.com/tutorial"><?php _e( 'Tutorial', 'pay_with_ether' ); ?></a>
+            </p>
+            <ul>
+                <li><?php _e( 'Amount', 'pay_by_ether' ); ?>:
+                    <strong><?php echo esc_html( $eth_value_with_dust ); ?></strong> ETH
+                </li>
+                <li><?php _e( 'Address', 'pay_by_ether' ); ?>:
+                    <strong><?php echo esc_html( $this->settings['payment_address'] ); ?></strong></li>
+                <li><?php _e( 'Data', 'pay_by_ether' ); ?>: <strong><?php echo esc_html( $tx_ref->get() ); ?></strong>
+                </li>
+            </ul>
 			<?php
 			$min = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 			if ( apply_filters( 'pwe_pay_with_metamask_button', true ) ) {
-				?>
-				<div class="pwe-metamask-button">Pay with MetaMask</button>
-				<style type="text/css">
-					div.pwe-metamask-button {
-						background-image: url('<?php echo $GLOBALS['pay_with_ether']->base_url . '/img/1_pay_mm_off.png'; ?>');
-					}
-					div.pwe-metamask-button:hover {
-						background-image: url('<?php echo $GLOBALS['pay_with_ether']->base_url . '/img/1_pay_mm_over.png'; ?>');
-					}
-					div.pwe-metamask-button:active {
-						background-image: url('<?php echo $GLOBALS['pay_with_ether']->base_url . '/img/1_pay_mm_off.png'; ?>');
-					}
-				</style>
+			?>
+            <div class="pwe-metamask-button">Pay with MetaMask</button>
+                <style type="text/css">
+                    div.pwe-metamask-button {
+                        background-image: url('<?php echo $GLOBALS['pay_with_ether']->base_url . '/img/1_pay_mm_off.png'; ?>');
+                    }
+
+                    div.pwe-metamask-button:hover {
+                        background-image: url('<?php echo $GLOBALS['pay_with_ether']->base_url . '/img/1_pay_mm_over.png'; ?>');
+                    }
+
+                    div.pwe-metamask-button:active {
+                        background-image: url('<?php echo $GLOBALS['pay_with_ether']->base_url . '/img/1_pay_mm_off.png'; ?>');
+                    }
+                </style>
 				<?php
 				wp_enqueue_script(
 					'paywithether',
@@ -457,13 +478,13 @@ class Gateway extends WC_Payment_Gateway {
 					'pwe',
 					[
 						'payment_address' => $this->settings['payment_address'],
-						'eth_value' => $eth_value_with_dust,
-						'tx_ref' => $tx_ref->get(),
+						'eth_value'       => $eth_value_with_dust,
+						'tx_ref'          => $tx_ref->get(),
 					]
 				);
-			}
-			?>
-		</section>
+				}
+				?>
+        </section>
 		<?php
 	}
 }
