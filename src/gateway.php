@@ -126,7 +126,7 @@ class Gateway extends WC_Payment_Gateway {
 	 */
 	private function apply_markup( $price ) {
 		$markup_percent = $this->settings['markup_percent'];
-		$multiplier = ( $markup_percent / 100 ) + 1;
+		is_numeric($markup_percent) ? $multiplier = ( $markup_percent / 100 ) + 1 : $multiplier = 1;
 		return round( $price * $multiplier, 5, PHP_ROUND_HALF_UP );
 	}
 
