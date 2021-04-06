@@ -446,7 +446,6 @@ class Gateway extends WC_Payment_Gateway {
                 </li>
             </ul>
 			<?php
-			$min = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 			if ( apply_filters( 'pwe_pay_with_metamask_button', true ) ) {
 			?>
             <div class="pwe-metamask-button">Pay with MetaMask</button>
@@ -466,7 +465,7 @@ class Gateway extends WC_Payment_Gateway {
 				<?php
 				wp_enqueue_script(
 					'paywithether',
-					$GLOBALS['pay_with_ether']->base_url . "/js/pay-with-ether{$min}.js",
+					$GLOBALS['pay_with_ether']->base_url . "/dist/js/pay-with-ether.js",
 					array( 'jquery' )
 				);
 				wp_enqueue_style(
