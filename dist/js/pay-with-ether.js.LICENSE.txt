@@ -1,0 +1,1 @@
+/*! bignumber.js v2.4.0 https://github.com/MikeMcl/bignumber.js/LICENCE */
