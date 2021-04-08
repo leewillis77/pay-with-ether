@@ -14,7 +14,7 @@ function pwe_sendTransaction() {
 				const txData = [ {
 					to: window.pwe.payment_address,
 					value: txValue,
-					data: window.pwe.tx_ref,
+					// data: window.pwe.tx_ref,
 					from: accounts[ 0 ],
 				} ];
 				window.ethereum.request(
