@@ -7,7 +7,7 @@ function pwe_sendTransaction() {
 			method: 'eth_requestAccounts'
 		},
 	).then( function ( accounts ) {
-				const txValue = new BigNumber(
+				const txValue = '0x' + new BigNumber(
 					Units.convert( window.pwe.eth_value, 'eth', 'wei' ),
 					10
 				).toString( 16 );
