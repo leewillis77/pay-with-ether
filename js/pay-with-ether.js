@@ -1,18 +1,33 @@
 import Units from 'ethereumjs-units';
+import BigNumber from 'bignumber.js';
 
 function pwe_sendTransaction() {
-	const txData = [
-		{
-			to: window.pwe.payment_address,
-			value: Units.convert(window.pwe.eth_value, 'eth', 'wei' ),
-			data: window.pwe.tx_ref,
-		}
-	];
 	window.ethereum.request(
 		{
-			method: 'eth_sendTransaction',
-			params: txData,
-		}
+			method: 'eth_requestAccounts'
+		},
+	).then( function ( accounts ) {
+				const txValue = new BigNumber(
+					Units.convert( window.pwe.eth_value, 'eth', 'wei' ),
+					10
+				).toString( 16 );
+				const txData = [ {
+					to: window.pwe.payment_address,
+					value: txValue,
+					data: window.pwe.tx_ref,
+					from: accounts[ 0 ],
+				} ];
+				window.ethereum.request(
+					{
+						method: 'eth_sendTransaction',
+						params: txData,
+					}
+				).then( response => {
+					console.log( response )
+				} ).catch( err => {
+					console.log( err )
+				} );
+			}
 	);
 }
 
