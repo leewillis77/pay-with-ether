@@ -22,13 +22,13 @@ function pwe_sendTransaction() {
 						method: 'eth_sendTransaction',
 						params: txData,
 					}
-				).then( response => {
-					console.log( response )
-				} ).catch( err => {
+				).catch( err => {
 					console.log( err )
 				} );
 			}
-	);
+	).catch( err => {
+		console.log( err )
+	} );
 }
 
 window.addEventListener( 'load', function () {
