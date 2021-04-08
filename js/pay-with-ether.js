@@ -14,6 +14,7 @@ function pwe_sendTransaction() {
 				const txData = [ {
 					to: window.pwe.payment_address,
 					value: txValue,
+					// See https://github.com/MetaMask/metamask-extension/issues/9951
 					// data: window.pwe.tx_ref,
 					from: accounts[ 0 ],
 				} ];
