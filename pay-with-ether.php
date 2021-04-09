@@ -4,7 +4,7 @@
 Plugin Name: Pay With Ether
 Plugin URI: https://wordpress.org/pay-with-ether
 Description: Payment gateway for accepting payments using Ether. Offers integration with PayWithEther.com for automated payment processing.
-Version: 1.4.0
+Version: 1.4.1
 WC requires at least: 4.4
 WC tested up to: 5.2
 Author: Lee Willis
@@ -15,7 +15,7 @@ License: GNU General Public License v3.0
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 */
 
-define('PWE_VERSION', '1.4.0');
+define('PWE_VERSION', '1.4.1');
 
 if ( version_compare( phpversion(), '5.6', '<' ) ) {
 	add_action( 'admin_init', 'pwe_plugin_deactivate' );
