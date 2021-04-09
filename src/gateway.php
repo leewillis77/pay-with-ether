@@ -466,12 +466,14 @@ class Gateway extends WC_Payment_Gateway {
 				wp_enqueue_script(
 					'paywithether',
 					$GLOBALS['pay_with_ether']->base_url . "/dist/js/pay-with-ether.js",
-					array( 'jquery' )
+					array( 'jquery' ),
+					PWE_VERSION
 				);
 				wp_enqueue_style(
 					'paywithether',
 					$GLOBALS['pay_with_ether']->base_url . "/css/pay-with-ether.css",
-					array()
+					array(),
+					PWE_VERSION
 				);
 				wp_localize_script(
 					'paywithether',
