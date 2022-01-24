@@ -2,7 +2,7 @@
 Contributors: leewillis77,morelazers,porridj
 Tags: e-commerce, payment, crypto, ethereum, ether, woocommerce
 Requires at least: 5.4
-Tested up to: 5.8
+Tested up to: 5.9
 License: GPL v2
 Stable tag: 1.4.2
 
