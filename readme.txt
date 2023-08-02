@@ -2,13 +2,15 @@
 Contributors: leewillis77,morelazers,porridj
 Tags: e-commerce, payment, crypto, ethereum, ether, woocommerce
 Requires at least: 5.4
-Tested up to: 6.1
+Tested up to: 6.2
 License: GPL v2
 Stable tag: 1.4.2
 
 Pay with Ether enables customers to pay with Ether on your WooCommerce store.
 
 == Description ==
+
+**Note:** This plugin will be closed and no longer maintained or supported from 29th September 2023
 
 Pay with Ether enables customers to pay with Ether on your WooCommerce store. Your customers will be offered
 the option of paying with Ether at checkout. If they choose that option then they will be quoted a price
